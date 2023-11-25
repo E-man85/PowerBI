@@ -1,0 +1,20 @@
+// Simple Example Date dimension language M
+let
+// fist day of year with column date of fact table 
+start_date = Date.StartOfYear(List.Min(fact_lndoc[fact_date])),
+// last day of year with column date of fact table 
+final_date = Date.EndOfYear(List.Max(fact_lndoc[fact_date])),
+// number of days (plus 1)
+number_days = Duration.Days(final_date-start_date)+1,
+// List of dates
+list_dates = List.Dates(start_date, number_days,#duration(1,0,0,0)),
+    #"Converted to Table" = Table.FromList(list_dates, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table",{{"Column1", type date}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Column1", "date"}}),
+    #"Inserted Year" = Table.AddColumn(#"Renamed Columns", "Year", each Date.Year([date]), Int64.Type),
+    #"Inserted Month" = Table.AddColumn(#"Inserted Year", "Month", each Date.Month([date]), Int64.Type),
+    #"Inserted Month Name" = Table.AddColumn(#"Inserted Month", "Month Name", each Date.MonthName([date]), type text),
+    #"Inserted Quarter" = Table.AddColumn(#"Inserted Month Name", "Quarter", each Date.QuarterOfYear([date]), Int64.Type),
+    #"Added Prefix" = Table.TransformColumns(#"Inserted Quarter", {{"Quarter", each "Q-" & Text.From(_, "pt-PT"), type text}}) 
+in
+ #"Added Prefix"
