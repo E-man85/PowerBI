@@ -1,9 +1,9 @@
-// Simple Example Date dimension language M
+// Date dimension language M
 let
 // fist day of year with column date of fact table 
-start_date = Date.StartOfYear(List.Min(fact_lndoc[fact_date])),
+start_date = Date.StartOfYear(List.Min(FactDoc[date])),
 // last day of year with column date of fact table 
-final_date = Date.EndOfYear(List.Max(fact_lndoc[fact_date])),
+final_date = Date.EndOfYear(List.Max(FactDoc[date])),
 // number of days (plus 1)
 number_days = Duration.Days(final_date-start_date)+1,
 // List of dates
